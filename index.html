@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Fix - College Maintenance Portal</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       FLOATING AMBIENT BACKGROUND GLOW ORBS
+       ============================================================ -->
+  <div class="bg-glow-container" aria-hidden="true">
+    <div class="bg-orb orb-purple"></div>
+    <div class="bg-orb orb-pink"></div>
+    <div class="bg-orb orb-cyan"></div>
+    <div class="bg-orb orb-amber"></div>
+  </div>
+
+  <!-- Confetti Canvas for Ticket Submission Celebrations -->
+  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+  <!-- ============================================================
+       TOP NAVIGATION BAR
+       ============================================================ -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand" onclick="navigateTo('home')" style="cursor: pointer;">
+        <div class="brand-icon">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+        </div>
+        <div>
+          <h1 class="brand-title">Campus<span>Fix</span></h1>
+          <p class="brand-tagline">College Facilities & Complaint Portal</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-links">
+        <button type="button" class="nav-link active" data-page="home" onclick="navigateTo('home')">
+          <i class="fa-solid fa-house"></i> <span>Home</span>
+        </button>
+        <button type="button" class="nav-link" data-page="complaint" onclick="navigateTo('complaint')">
+          <i class="fa-solid fa-pen-to-square"></i> <span>File Complaint</span>
+        </button>
+        <button type="button" class="nav-link" data-page="feed" onclick="navigateTo('feed')">
+          <i class="fa-solid fa-list-check"></i> <span>Campus Feed</span>
+        </button>
+        <button type="button" class="nav-link" data-page="track" onclick="navigateTo('track')">
+          <i class="fa-solid fa-location-crosshairs"></i> <span>Track Status</span>
+        </button>
+      </nav>
+
+      <!-- User Auth Profile Area -->
+      <div class="header-auth" id="headerAuthArea"></div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       PAGE 1: HOME PAGE VIEW
+       ============================================================ -->
+  <section id="view-home" class="page-view active">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <!-- Floating Micro-Badges for Movement -->
+      <div class="floating-chips-wrapper" aria-hidden="true">
+        <div class="floating-chip chip-1">
+          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i>
+          <span>AC leak repaired in 2 hrs</span>
+        </div>
+        <div class="floating-chip chip-2">
+          <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
+          <span>98.4% Resolution Rate</span>
+        </div>
+        <div class="floating-chip chip-3">
+          <i class="fa-solid fa-droplet" style="color: #06b6d4;"></i>
+          <span>Dorm water pump online</span>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <span class="hero-badge animate-float">
+          <i class="fa-solid fa-shield-halved"></i> Official Campus Maintenance Hub
+        </span>
+        <h1 class="hero-title">Report, Track & Fix <br><span class="gradient-text-flow">Campus Facilities</span> Faster</h1>
+        <p class="hero-description">
+          A centralized grievance and maintenance portal for students, faculty, and administration. Report broken ACs, plumbing leaks, Wi-Fi outages, and classroom issues with live repair tracking.
+        </p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary btn-lg glow-pulse" onclick="navigateTo('complaint')">
+            <i class="fa-solid fa-bullhorn"></i> File a Complaint
+          </button>
+          <button type="button" class="btn btn-secondary btn-lg" onclick="navigateTo('track')">
+            <i class="fa-solid fa-magnifying-glass-location"></i> Track Existing Ticket
+          </button>
+          <button type="button" class="btn btn-outline btn-lg" onclick="navigateTo('feed')">
+            <i class="fa-solid fa-compass"></i> View Campus Feed
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Metrics Grid -->
+    <div class="home-stats-wrapper">
+      <div class="stats-section">
+        <div class="stat-card">
+          <div class="stat-icon icon-total"><i class="fa-solid fa-clipboard-list"></i></div>
+          <div class="stat-info"><h3 id="statTotalIssues">0</h3><p>Total Complaints</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-pending"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-info"><h3 id="statPendingIssues">0</h3><p>Pending Review</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-progress"><i class="fa-solid fa-person-digging"></i></div>
+          <div class="stat-info"><h3 id="statInProgressIssues">0</h3><p>Under Repair</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-resolved"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-info"><h3 id="statResolvedIssues">0</h3><p>Resolved</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="features-section">
+      <div class="section-heading-center">
+        <h2>How CampusFix Works</h2>
+        <p>A transparent 3-step pipeline connecting student reports to facility technicians</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-card-num">01</div>
+          <div class="step-card-icon icon-step-1"><i class="fa-solid fa-camera-retro"></i></div>
+          <h3>Snap & Submit</h3>
+          <p>Describe the issue, pinpoint the building and room, and optionally attach a photo. Your report generates a trackable Ticket ID.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-card-num">02</div>
+          <div class="step-card-icon icon-step-2"><i class="fa-solid fa-user-gear"></i></div>
+          <h3>Review & Dispatch</h3>
+          <p>Maintenance leads inspect urgency, allocate technicians (HVAC, plumbing, electrical), and publish real-time progress notes.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-card-num">03</div>
+          <div class="step-card-icon icon-step-3"><i class="fa-solid fa-circle-check"></i></div>
+          <h3>Verified & Resolved</h3>
+          <p>Once repairs are inspected, the ticket is marked resolved. Students can confirm and close the loop with zero paperwork.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Shortcuts -->
+    <div class="categories-section">
+      <div class="section-heading-center">
+        <h2>Maintenance Categories</h2>
+        <p>Quickly file issues based on campus service department</p>
+      </div>
+
+      <div class="categories-grid">
+        <div class="category-box cat-box-electrical" onclick="openComplaintWithCategory('HVAC / Electrical')">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-bolt"></i></div>
+          <h4>Electrical & HVAC</h4>
+          <p>AC leaks, power sockets, lighting, fans</p>
+        </div>
+        <div class="category-box cat-box-plumbing" onclick="openComplaintWithCategory('Plumbing')">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-droplet"></i></div>
+          <h4>Plumbing & Water</h4>
+          <p>Low pressure, leaks, washroom repairs</p>
+        </div>
+        <div class="category-box cat-box-it" onclick="openComplaintWithCategory('Classroom & IT')">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-laptop-code"></i></div>
+          <h4>Classroom & IT</h4>
+          <p>Projectors, HDMI cables, lab PCs, Wi-Fi</p>
+        </div>
+        <div class="category-box cat-box-furniture" onclick="openComplaintWithCategory('Furniture & Fixtures')">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-couch"></i></div>
+          <h4>Furniture & Desks</h4>
+          <p>Broken chairs, window blinds, locks, doors</p>
+        </div>
+        <div class="category-box cat-box-sanitation" onclick="openComplaintWithCategory('Cleanliness & Sanitation')">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-soap"></i></div>
+          <h4>Sanitation & Hygiene</h4>
+          <p>Trash overflow, spills, washroom cleaning</p>
+        </div>
+        <div class="category-box cat-box-safety" onclick="openComplaintWithCategory('Safety & Security')">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-shield-halved"></i></div>
+          <h4>Safety & Security</h4>
+          <p>Broken steps, exposed wires, emergency exits</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 2: LOGIN / AUTH PAGE VIEW
+       ============================================================ -->
+  <section id="view-login" class="page-view">
+    <div class="auth-wrapper">
+      <div class="auth-ring">
+      <div class="auth-shell" id="loginCard" data-role="student">
+
+        <!-- Left showcase panel -->
+        <aside class="auth-aside" aria-hidden="true">
+          <div class="aside-blob blob-a"></div>
+          <div class="aside-blob blob-b"></div>
+          <div class="aside-grid"></div>
+
+          <div class="aside-brand">
+            <span class="aside-logo"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+            <span>Campus<strong>Fix</strong></span>
+          </div>
+
+          <h2 class="aside-title">Fix it fast.<br><span id="asideWord" class="aside-word">Track it live.</span></h2>
+          <p class="aside-text">One portal for every broken light, leaking tap and flickering projector on campus.</p>
+
+          <span class="aside-chip chip-p"><i class="fa-solid fa-droplet"></i></span>
+          <span class="aside-chip chip-q"><i class="fa-solid fa-wifi"></i></span>
+          <span class="aside-chip chip-r"><i class="fa-solid fa-lightbulb"></i></span>
+          <span class="aside-chip chip-s"><i class="fa-solid fa-snowflake"></i></span>
+
+          <div class="aside-tilt" id="asideTilt">
+          <div class="aside-ticket">
+            <div class="aside-ticket-top">
+              <span class="aside-ticket-id">#CF-LIVE</span>
+              <span class="aside-ticket-pill"><i class="fa-solid fa-circle"></i> In progress</span>
+            </div>
+            <div class="aside-ticket-title">Library AC leak on 3rd floor</div>
+            <div class="aside-progress"><span></span></div>
+            <div class="aside-ticket-steps">
+              <em class="done">Submitted</em><em class="done">Assigned</em><em class="now">Repairing</em><em>Resolved</em>
+            </div>
+          </div>
+          </div>
+
+          <ul class="aside-points">
+            <li><i class="fa-solid fa-bolt"></i> Report an issue in under a minute</li>
+            <li><i class="fa-solid fa-location-crosshairs"></i> Follow every repair step in real time</li>
+            <li><i class="fa-solid fa-thumbs-up"></i> Upvote problems that affect you too</li>
+          </ul>
+        </aside>
+
+        <!-- Right form panel -->
+        <div class="auth-main">
+          <div class="auth-heading">
+            <span class="auth-role-icon" id="authRoleIcon"><i class="fa-solid fa-graduation-cap"></i></span>
+            <div>
+              <h2 id="authRoleTitle">Welcome, Student</h2>
+              <p id="authRoleHint">Sign in with your Student ID to file and track complaints.</p>
+            </div>
+          </div>
+
+          <div class="auth-role-tabs">
+            <button type="button" class="auth-tab-btn active" id="tabStudentLogin" onclick="switchLoginTab('student')">
+              <i class="fa-solid fa-graduation-cap"></i> Student
+            </button>
+            <button type="button" class="auth-tab-btn" id="tabStaffLogin" onclick="switchLoginTab('staff')">
+              <i class="fa-solid fa-wrench"></i> Staff
+            </button>
+            <button type="button" class="auth-tab-btn" id="tabAdminLogin" onclick="switchLoginTab('admin')">
+              <i class="fa-solid fa-user-shield"></i> Admin
+            </button>
+          </div>
+
+          <!-- Student Form -->
+          <form id="studentLoginForm" class="login-form">
+            <div class="form-group">
+              <label for="studentId">Student ID</label>
+              <div class="field">
+                <i class="fa-solid fa-id-card"></i>
+                <input type="text" id="studentId" placeholder="e.g. STU-2024-001" autocomplete="off" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="studentEmail">Campus Email</label>
+              <div class="field">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="studentEmail" placeholder="e.g. maya.lin@college.edu" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="studentPassword">Password</label>
+              <div class="field">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="studentPassword" placeholder="Enter your password" required>
+                <button type="button" class="field-eye" onclick="togglePassword('studentPassword', this)" aria-label="Show or hide password"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-auth">
+              <i class="fa-solid fa-right-to-bracket"></i> Sign In as Student
+            </button>
+          </form>
+
+          <!-- Staff Form -->
+          <form id="staffLoginForm" class="login-form" style="display: none;">
+            <div class="form-group">
+              <label for="staffId">Staff ID</label>
+              <div class="field">
+                <i class="fa-solid fa-id-badge"></i>
+                <input type="text" id="staffId" placeholder="e.g. STF-8041" autocomplete="off" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="staffPin">Staff PIN</label>
+              <div class="field">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" id="staffPin" placeholder="Enter your PIN" required>
+                <button type="button" class="field-eye" onclick="togglePassword('staffPin', this)" aria-label="Show or hide PIN"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-auth">
+              <i class="fa-solid fa-key"></i> Sign In as Staff
+            </button>
+          </form>
+
+          <!-- Admin Form -->
+          <form id="adminLoginForm" class="login-form" style="display: none;">
+            <div class="form-group">
+              <label for="adminId">Admin ID</label>
+              <div class="field">
+                <i class="fa-solid fa-user-shield"></i>
+                <input type="text" id="adminId" placeholder="e.g. ADM-1001" autocomplete="off" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="adminPin">Admin Security PIN</label>
+              <div class="field">
+                <i class="fa-solid fa-shield-halved"></i>
+                <input type="password" id="adminPin" placeholder="Enter your security PIN" required>
+                <button type="button" class="field-eye" onclick="togglePassword('adminPin', this)" aria-label="Show or hide PIN"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-auth">
+              <i class="fa-solid fa-key"></i> Sign In as Admin
+            </button>
+          </form>
+
+          <!-- 1-Click Demo Logins -->
+          <div class="demo-login-box">
+            <span class="demo-login-title"><i class="fa-solid fa-bolt"></i> Quick demo logins</span>
+            <div class="demo-btn-group" style="grid-template-columns: repeat(3, 1fr);">
+              <button type="button" class="demo-btn" onclick="quickLoginDemo('student')">
+                <i class="fa-solid fa-user-graduate"></i> Student
+              </button>
+              <button type="button" class="demo-btn demo-btn-staff" onclick="quickLoginDemo('staff')">
+                <i class="fa-solid fa-wrench"></i> Staff
+              </button>
+              <button type="button" class="demo-btn demo-btn-staff" onclick="quickLoginDemo('admin')">
+                <i class="fa-solid fa-user-gear"></i> Admin
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 3: COMPLAINT PAGE VIEW
+       ============================================================ -->
+  <section id="view-complaint" class="page-view">
+    <div class="complaint-page-container">
+      <div class="complaint-layout">
+        <div class="complaint-form-card">
+          <div class="card-intro">
+            <div class="card-intro-badge"><i class="fa-solid fa-bullhorn"></i> New Ticket</div>
+            <h2>Submit Campus Complaint</h2>
+            <p>Fill out the details below. Our facility crews review reports within 2 hours.</p>
+          </div>
+
+          <form id="pageComplaintForm" class="complaint-form">
+            <div class="form-group">
+              <label for="complaintTitle">Complaint Headline <span class="required">*</span></label>
+              <input type="text" id="complaintTitle" placeholder="e.g. Water dripping from AC in Chemistry Hall Room 102" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="complaintCategory">Issue Category <span class="required">*</span></label>
+                <select id="complaintCategory" required>
+                  <option value="" disabled selected>Select category</option>
+                  <option value="HVAC / Electrical">⚡ Electrical & HVAC</option>
+                  <option value="Plumbing">💧 Plumbing & Water</option>
+                  <option value="Classroom & IT">💻 Classroom & IT</option>
+                  <option value="Furniture & Fixtures">🪑 Furniture & Desks</option>
+                  <option value="Cleanliness & Sanitation">🧼 Cleanliness & Sanitation</option>
+                  <option value="Safety & Security">🛡️ Safety & Security</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="complaintPriority">Urgency Level <span class="required">*</span></label>
+                <select id="complaintPriority" required>
+                  <option value="Low">Low (Cosmetic / Minor inconvenience)</option>
+                  <option value="Medium" selected>Medium (Standard Maintenance)</option>
+                  <option value="High">High (Impairs classroom lectures/dorm living)</option>
+                  <option value="Emergency">🚨 Emergency (Immediate hazard / Water gush)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="complaintBuilding">Building / Campus Area <span class="required">*</span></label>
+                <input type="text" id="complaintBuilding" placeholder="e.g. Science Complex, West Block" required>
+              </div>
+
+              <div class="form-group">
+                <label for="complaintLocation">Room / Specific Landmark <span class="required">*</span></label>
+                <input type="text" id="complaintLocation" placeholder="e.g. Room 302, 2nd row near projector" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="complaintDesc">Detailed Description <span class="required">*</span></label>
+              <textarea id="complaintDesc" rows="4" placeholder="Explain the problem in detail, when you first noticed it, and any risks..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Attach Photo Proof (Optional)</label>
+              <div class="file-dropzone" id="complaintDropzone">
+                <input type="file" id="complaintImageInput" accept="image/*" class="file-input">
+                <div id="complaintDropzoneContent" class="dropzone-content">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <p>Click to browse or drag & drop photo here</p>
+                  <span>Supports PNG, JPG, WebP up to 5MB</span>
+                </div>
+                <div class="image-preview-container" id="complaintImagePreviewContainer" style="display: none;">
+                  <img id="complaintImagePreview" alt="Upload Preview">
+                  <button type="button" class="remove-image-btn" id="complaintRemoveImageBtn">
+                    <i class="fa-solid fa-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="complaintReporterName">Your Name</label>
+                <input type="text" id="complaintReporterName" placeholder="e.g. Maya Lin (Student)">
+              </div>
+
+              <div class="form-group">
+                <label for="complaintReporterContact">Student ID / Contact Email</label>
+                <input type="text" id="complaintReporterContact" placeholder="e.g. mlin@college.edu">
+              </div>
+            </div>
+
+            <div class="form-footer-action">
+              <button type="submit" class="btn btn-primary btn-lg glow-pulse">
+                <i class="fa-solid fa-paper-plane"></i> Submit Complaint Ticket
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="complaint-sidebar">
+          <div class="sidebar-card">
+            <h3><i class="fa-solid fa-circle-info"></i> Helpful Tips</h3>
+            <ul class="tips-list">
+              <li><strong>Be specific:</strong> Include exact room numbers or nearby landmarks.</li>
+              <li><strong>Attach photos:</strong> Visual evidence helps technicians bring the right tools.</li>
+              <li><strong>Check existing tickets:</strong> Browse the <a href="javascript:void(0)" onclick="navigateTo('feed')">Campus Feed</a> to upvote existing issues.</li>
+            </ul>
+          </div>
+
+          <div class="sidebar-card emergency-box">
+            <h4><i class="fa-solid fa-triangle-exclamation"></i> Immediate Hazard?</h4>
+            <p>For live electrical sparks, gas leaks, or active flooding, contact Campus Emergency immediately:</p>
+            <div class="emergency-phone"><i class="fa-solid fa-phone"></i> +1 (555) 019-9110</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 4: FEED VIEW
+       ============================================================ -->
+  <section id="view-feed" class="page-view">
+    <div class="main-container">
+      <div class="admin-notice" id="adminNoticeBanner" style="display: none;">
+        <i class="fa-solid fa-user-gear"></i>
+        <span><strong>Maintenance Admin Console Active:</strong> You can assign crew members, change repair states, and post updates.</span>
+      </div>
+
+      <div class="controls-section">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Search by Ticket ID (e.g. CF-101), building, or description...">
+        </div>
+
+        <div class="filters-group">
+          <div class="select-wrapper">
+            <select id="categoryFilter">
+              <option value="ALL">All Categories</option>
+              <option value="HVAC / Electrical">Electrical & HVAC</option>
+              <option value="Plumbing">Plumbing & Water</option>
+              <option value="Classroom & IT">Classroom & IT</option>
+              <option value="Furniture & Fixtures">Furniture & Fixtures</option>
+              <option value="Cleanliness & Sanitation">Cleanliness & Hygiene</option>
+              <option value="Safety & Security">Safety & Security</option>
+            </select>
+          </div>
+
+          <div class="select-wrapper">
+            <select id="statusFilter">
+              <option value="ALL">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+            </select>
+          </div>
+
+          <div class="select-wrapper">
+            <select id="priorityFilter">
+              <option value="ALL">All Priorities</option>
+              <option value="Emergency">Emergency</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <div class="select-wrapper">
+            <select id="sortOrder">
+              <option value="newest">Newest First</option>
+              <option value="upvotes">Most Upvoted</option>
+              <option value="priority">Highest Priority</option>
+            </select>
+          </div>
+
+          <button class="btn btn-secondary btn-icon" id="resetFiltersBtn" title="Reset Filters">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Campus Complaints Feed</h2>
+        <span class="count-badge" id="resultsCount">0 items found</span>
+      </div>
+
+      <div class="issues-grid" id="issuesGrid"></div>
+
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <i class="fa-solid fa-circle-check empty-icon"></i>
+        <h3>No complaints match your filters</h3>
+        <p>Adjust your search query or reset filters to view all campus complaints.</p>
+        <button class="btn btn-secondary" onclick="resetFilters()">Reset All Filters</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 5: TRACK PAGE VIEW
+       ============================================================ -->
+  <section id="view-track" class="page-view">
+    <div class="track-page-container">
+      <div class="track-card">
+        <div class="track-page-header">
+          <div class="modal-icon"><i class="fa-solid fa-location-crosshairs"></i></div>
+          <div>
+            <h2>Track Complaint Status</h2>
+            <p>Enter your Ticket ID (e.g. <code>CF-101</code>) or campus email to check live resolution progress</p>
+          </div>
+        </div>
+
+        <div class="track-search-row">
+          <input type="text" id="trackPageInput" placeholder="Enter Ticket ID (e.g. CF-101, CF-103) or Student Email">
+          <button type="button" class="btn btn-primary" id="trackPageBtn">
+            <i class="fa-solid fa-magnifying-glass"></i> Track Ticket
+          </button>
+        </div>
+
+        <div id="trackPageResult" style="display: none;">
+          <div class="track-ticket-header">
+            <div>
+              <span class="meta-id" id="trackPageTicketId">CF-101</span>
+              <h3 id="trackPageTicketTitle" class="track-title">Title Here</h3>
+              <p id="trackPageTicketMeta" class="track-subtitle"><i class="fa-solid fa-location-dot"></i> Location</p>
+            </div>
+            <div id="trackPageBadge"></div>
+          </div>
+
+          <div class="stepper-container">
+            <div class="stepper-step" id="page-step-submitted">
+              <div class="step-circle"><i class="fa-solid fa-file-circle-check"></i></div>
+              <div class="step-label">Submitted</div>
+              <div class="step-time" id="pageStepTimeSubmitted">-</div>
+            </div>
+            <div class="stepper-line" id="page-line-1"></div>
+
+            <div class="stepper-step" id="page-step-acknowledged">
+              <div class="step-circle"><i class="fa-solid fa-user-check"></i></div>
+              <div class="step-label">Acknowledged</div>
+              <div class="step-time" id="pageStepTimeAssigned">Under Review</div>
+            </div>
+            <div class="stepper-line" id="page-line-2"></div>
+
+            <div class="stepper-step" id="page-step-inprogress">
+              <div class="step-circle"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+              <div class="step-label">In Progress</div>
+              <div class="step-time" id="pageStepTimeProgress">Pending</div>
+            </div>
+            <div class="stepper-line" id="page-line-3"></div>
+
+            <div class="stepper-step" id="page-step-resolved">
+              <div class="step-circle"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="step-label">Resolved</div>
+              <div class="step-time" id="pageStepTimeResolved">Open</div>
+            </div>
+          </div>
+
+          <div class="track-history-box">
+            <h4><i class="fa-solid fa-clock-rotate-left"></i> Maintenance Activity Log</h4>
+            <div id="trackPageHistoryList" class="track-history-list"></div>
+          </div>
+        </div>
+
+        <div id="trackPageNotFound" class="empty-state" style="display: none; padding: 2rem 1rem;">
+          <i class="fa-solid fa-circle-question" style="font-size: 2.2rem; color: var(--warning); margin-bottom: 0.5rem;"></i>
+          <h4>Complaint Ticket Not Found</h4>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Please verify the Ticket ID (e.g. <code>CF-101</code>) or try searching with your email.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Modal -->
+  <div class="modal-overlay" id="adminUpdateModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon"><i class="fa-solid fa-sliders"></i></div>
+          <div>
+            <h2>Update Maintenance Status</h2>
+            <p id="adminModalIssueTitle">Issue: #CF-000</p>
+          </div>
+        </div>
+        <button class="close-btn" id="closeAdminModalBtn">&times;</button>
+      </div>
+
+      <form id="adminUpdateForm" class="modal-form">
+        <input type="hidden" id="adminTargetIssueId">
+        <div class="form-group">
+          <label>Status <span class="required">*</span></label>
+          <select id="adminStatusSelect" required>
+            <option value="Pending">Pending Review</option>
+            <option value="In Progress">In Progress (Dispatched / Repairing)</option>
+            <option value="Resolved">Resolved (Completed & Verified)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Assigned Technician / Crew</label>
+          <input type="text" id="adminAssignedTo" placeholder="e.g. Facilities HVAC Team, Tech Support">
+        </div>
+
+        <div class="form-group">
+          <label>Official Resolution / Status Note</label>
+          <textarea id="adminLogNote" rows="3" placeholder="e.g. Replaced faulty lamp bulb and verified connection..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelAdminModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Status</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>&copy; 2026 CampusFix Facilities Portal &bull; Working for cleaner, safer, smarter campuses.</p>
+      <div class="footer-actions">
+        <button type="button" class="link-btn" id="resetSampleDataBtn">
+          <i class="fa-solid fa-trash-can"></i> Clear All Complaints
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
